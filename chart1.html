@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<!-- <meta name="viewport" content="width=device-width, initial-scale=1"> -->
+		<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+		<title>Chart 1 - Transaction Volume Hourly</title>
+		<style type="text/css">
+			* {
+				margin: 0;
+				padding: 0;
+				font-family: "Avenir", "Segoe UI", arial, sans-serif;
+			}
+			body {
+				/*padding: 20px;*/
+				background: #f1f5f9;
+			}
+			section {
+				height: calc(100vh - 80px);
+				padding: 40px;
+				border-bottom: 1px solid #ddd;
+			}
+			h1 {
+				font-weight: normal;
+				padding: 0 0 15px;
+			}
+
+			/* chart CSS */
+			.chart-box {
+				background: white;
+				border-radius: 16px;
+				padding: 20px;
+			}
+			.chart-area {
+				background: #2a2a2a;
+				padding: 15px;
+			}
+		</style>
+	</head>
+	<body>
+		<section>
+			<h1>Chart 1 - Channel Analytics | Transaction Volume Hourly</h1>
+			<div class="chart-box">
+				<div class="chart-area">
+					<canvas id="caTransVolHistory" width="300" height="150"></canvas>
+				</div>
+			</div>
+		</section>
+		<section>
+			<h1>Chart 2 - Channel Analytics | Transaction Volume Hourly</h1>
+			<div class="chart-box">
+				<div class="chart-area">
+					<canvas id="caCustOverview" width="300" height="150"></canvas>
+				</div>
+			</div>
+		</section>
+		<script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/chartjs-plugin-annotation/2.0.0/chartjs-plugin-annotation.min.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/chartjs-plugin-datalabels/2.1.0/chartjs-plugin-datalabels.min.js"></script>
+		<script type="text/javascript">
+			/* //Chart 1 - Channel Analytics | Transaction Volume Hourly */
+			function createChartTxnValHr() {
+
+				var ccanv = document.getElementById('caTransVolHistory');
+				var ctxctvh = ccanv.getContext('2d');
+				/* ccanv.style.backgroundColor = "rgb(43,43,43)"; */
+
+				var grbackground_1 = ctxctvh.createLinearGradient(0, 0, 0, 300);
+				grbackground_1.addColorStop(0, 'rgb(42, 95, 245)'); // final 102,129,197
+				grbackground_1.addColorStop(1, 'rgb(13, 86, 212)'); //2a5ff5 - final 62,97,181
+
+				var ctvhchartDataxLabel = [
+					"N01","N02","N03","N04","N05","N06","N07","N09","N08","N10","N11","N12","N13","N14","N15","N16","N18","N17","N19","N20","N21","N22","N23", "N24"
+				];
+				var ctvhchartDatayData = [
+					5000, 2500, 2400, 2400, 2500, 4900, 12000, 25000, 30000, 35000, 35000, 35000, 33000, 31000, 30000, 30000, 31000, 30000, 33000, 39000, 38000, 35000, 25000, 15000
+				];
+
+				/*var data1 = {
+    labels: ["Chocolate", "Vanilla", "Strawberry", "YELLOW"],
+    datasets: [
+        {
+            label: "Blue",
+            backgroundColor: "blue",
+            data: [5000, 2500, 2400, 2400, 2500, 4900]
+        },
+        {
+            label: "Red",
+            backgroundColor: "red",
+            data: [12000, 25000, 30000, 35000, 35000, 35000]
+        },
+        {
+            label: "Green",
+            backgroundColor: "green",
+            data: [33000, 31000, 30000, 30000, 31000, 30000]
+        },
+        {
+        	label: "Purple",
+            backgroundColor: "purple",
+        	data: [33000, 39000, 38000, 35000, 25000, 15000]
+        }
+    ]
+};*/
+
+
+				Chart.register(ChartDataLabels);
+				
+				var catvh = new Chart(ctxctvh, {
+					type: 'bar',
+					data: {
+						labels: ctvhchartDataxLabel,/*['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],*/
+						datasets: [{
+							label: 'Transaction Amount',
+							data: ctvhchartDatayData,/*[12, 19, 3, 5, 2, 3],*/
+							//backgroundColor: ["#818cf8"],/*[
+							backgroundColor: [ grbackground_1 ], /*
+							'rgba(255, 99, 132, 0.2)',
+							'rgba(54, 162, 235, 0.2)',
+							'rgba(255, 206, 86, 0.2)',
+							'rgba(75, 192, 192, 0.2)',
+							'rgba(153, 102, 255, 0.2)',
+							'rgba(255, 159, 64, 0.2)'
+							],*/
+							// barThickness: 26,
+							
+							//working...
+							// datalabels: {
+							// 	color: "green",
+							// },
+						}],
+					},
+
+					// data: data1,
+
+					font: {
+						family: "Avenir, Segoe UI, arial, sans-serif",
+					},
+
+					options: {
+						responsive: true,
+						// aspectRatio: 3,
+						/*layout: {
+							padding: 20,
+						},*/
+						plugins: {
+							legend: {
+								display: false,
+							},
+							title: {
+								display: true,
+								text: "Transaction Volume Hourly",
+								color: "white",
+								padding: {
+									bottom: 15,
+								},
+								font: {
+									family: "Avenir, Segoe UI, arial, sans-serif",
+									size: 20,
+									weight: "500",
+								},
+							},
+
+							//average line
+							autocolors: false,
+							annotation: {
+								annotations: {
+									line1: {
+										type: "line",
+										yMin: 2500,
+										yMax: 35000,
+										borderColor: "#e51529", //e51529 - 2a5ff5
+										borderWidth: 1,
+										// pointStyle: "circle",
+										// borderDash: [8, 3],
+									}, //line1
+								}, //annotations
+							}, //annotation
+
+							//datalabels 
+							datalabels: {
+								color: "#dddddd",
+								align: "top",
+								anchor: "end",
+								font: {
+									family: "Avenir, Segoe UI, arial, sans-serif",
+								},
+								// formatter: function (val, ctx) {
+								// 	return thousands_separators(val);
+								// },
+							},
+
+							tooltip: {
+								position: "nearest",
+								xAlign: "center",
+								yAlign: "bottom",
+								font: {
+									family: "Avenir, Segoe UI, arial, sans-serif",
+								},
+								callbacks: {
+									label: function (cntx) {
+										//console.log(cntx);
+										return " Amount $ " + thousands_separators(cntx.parsed.y);
+									},
+									title: function (cntx) {
+										// console.log('title ',cntx);
+										return "Hour - " + cntx[0].label;
+									},
+								},
+								padding: 10
+							},
+
+						}, //plugin
+
+						scales: {
+							y: {
+								//display: true,
+								title: {
+									text: "Amount",
+									display: true,
+									color: "#ffffff",
+									font: {
+										size: 14,
+										// weight: "bold",
+										// family: "Avenir, Segoe UI, arial, sans-serif",
+										// family: "Segoe UI, arial, sans-serif",
+									},
+								}, //title
+								beginAtZero: true,
+								ticks: {
+									color: "#aaa",
+									// stepSize: 5000,
+									font: {
+										// family: "Avenir, Segoe UI, arial, sans-serif",
+									},
+									callback: function(v,i,t) {
+										return "$ " + thousands_separators(v);
+									},
+								},
+								grid: {
+									borderColor: 'transparent',
+									color: '#444',
+								},
+								max: 40000,
+								min: 0,
+							}, //y
+							x: {
+								title: {
+									text: "Hourly Report",
+									display: true,
+									color: "#ffffff",
+									font: {
+										size: 14,
+										// weight: "bold",
+										// family: "Avenir, Segoe UI, arial, sans-serif",
+									},
+								},
+								ticks: {
+									color: "#aaa",
+									font: {
+										// family: "Avenir, Segoe UI, arial, sans-serif",
+									},
+								},
+								grid: {
+									borderColor: "#555",
+									color: 'transparent',
+								},
+							} //x
+						}, //scales
+						/*animation: {
+							onComplete: function () {
+								//console.log('helo..w.w');
+								var ctx = this.Chart.ctxctvh;
+								ctx.font = this.scale.font;
+								ctx.fillStyle = this.scale.textColor
+								ctx.textAlign = "center";
+								ctx.textBaseline = "bottom";
+								this.datasets.forEach(function (dataset) {
+									dataset.bars.forEach(function (bar) {
+										ctx.fillText(bar.value, bar.x, bar.y - 5);
+									});
+								});
+							},
+						},*/
+						// barValueSpacing: 10
+					} //options,
+				});
+				//catvh.defaults.global.defaultFontColor= 'red';
+				//ctxctvh.createLinearGradient(x0,y0,x1,y1);
+				}
+				createChartTxnValHr();
+
+				/* //Chart 2 - Channel Analytics | Customer Overview */
+				function createChartcustoverview() {
+					// body...
+				}
+				createChartcustoverview();
+
+				function thousands_separators(num) {
+					var num_parts = num.toString().split(".");
+					num_parts[0] = num_parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+					return num_parts.join(".");
+				}
+		</script>
+	</body>
+</html>
