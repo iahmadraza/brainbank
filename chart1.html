@@ -4,7 +4,7 @@
 		<meta charset="utf-8">
 		<!-- <meta name="viewport" content="width=device-width, initial-scale=1"> -->
 		<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-		<title>Chart 1 - Transaction Volume Hourly</title>
+		<title>Brain Bank - Channel Analytics</title>
 		<style type="text/css">
 			* {
 				margin: 0;
@@ -16,7 +16,7 @@
 				background: #f1f5f9;
 			}
 			section {
-				height: calc(100vh - 80px);
+				height: calc(100vh - 80px); 
 				padding: 40px;
 				border-bottom: 1px solid #ddd;
 			}
@@ -30,10 +30,79 @@
 				background: white;
 				border-radius: 16px;
 				padding: 20px;
+				box-shadow: rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0.1) 0px 1px 3px 0px, rgba(0, 0, 0, 0.1) 0px 1px 2px -1px;
 			}
 			.chart-area {
 				background: #2a2a2a;
 				padding: 15px;
+			}
+
+			/* chart section table data  */
+			div.cachartdatatable {
+				text-align: center;
+				padding: 20px;
+				/*background: #eee;*/
+			}
+			div.cachartdatatable table {
+				/*width: 80%;*/
+				margin: auto;
+				color: #999;
+				/*border-top: 1px solid #444;*/
+				/*padding-top: 20px;*/
+				border-collapse: collapse;
+				background: #333;
+			}
+			div.cachartdatatable table tr {
+			}
+			div.cachartdatatable table tr th {
+				/*border-bottom:  1px solid #444444;*/
+				background: #444;
+			}
+			div.cachartdatatable table tr td {
+				text-align: right;
+				border-bottom:  1px solid #444444;
+			}
+			div.cachartdatatable table tr:last-child td {
+				border-bottom: none;
+			}
+			div.cachartdatatable table tr th,
+			div.cachartdatatable table tr td {
+				/*border:  1px solid #343434;*/
+				/*border-bottom:  1px solid #343434;*/
+			}
+			div.cachartdatatable table tr td:first-child {
+				text-align: left;
+			}
+			div.cachartdatatable table tr th em {
+				font-size: 14px;
+				font-weight: normal;
+				color: #ccc;
+			}
+			div.cachartdatatable table tr th em,
+			div.cachartdatatable table tr td em {
+				font-style: normal;
+				padding: 8px 15px;
+				display: block;
+			}
+			div.cachartdatatable table tr td em i {
+				display: inline-block;
+				background: #555;
+				width: 16px;
+				height: 16px;
+				border-radius: 8px;
+				margin-right: 5px;
+			}
+			div.cachartdatatable table tr td em i.ind1 {
+				background: #A2B5BB;
+			}
+			div.cachartdatatable table tr td em i.ind2 {
+				background: #495C83;
+			}
+			div.cachartdatatable table tr td em i.ind3 {
+				background: #FFA500;
+			}
+			div.cachartdatatable.tblperdiff table tr :not(td:first-child) em {
+				text-align: center;
 			}
 		</style>
 	</head>
@@ -42,15 +111,66 @@
 			<h1>Chart 1 - Channel Analytics | Transaction Volume Hourly</h1>
 			<div class="chart-box">
 				<div class="chart-area">
-					<canvas id="caTransVolHistory" width="300" height="150"></canvas>
+					<canvas id="caTransVolHistory" width="600" height="500"></canvas>
 				</div>
 			</div>
 		</section>
 		<section>
-			<h1>Chart 2 - Channel Analytics | Transaction Volume Hourly</h1>
+			<h1>Chart 2 - Channel Analytics | Customer Overview</h1>
 			<div class="chart-box">
 				<div class="chart-area">
-					<canvas id="caCustOverview" width="300" height="150"></canvas>
+					<canvas id="caCustOverview" width="300" height="100"></canvas>
+					<div class="cachartdatatable">
+						<table>
+							<tr>
+								<th></th>
+								<th><em>Online</em></th>
+								<th><em>Mobile</em></th>
+								<th><em>ATM</em></th>
+								<th><em>POS</em></th>
+							</tr>
+							<tr>
+								<td><em><i class="ind1"></i>Number of Customers in Last Completed Week</em></td>
+								<td><em>1,061,004</em></td>
+								<td><em>1,717,591</em></td>
+								<td><em>89,000</em></td>
+								<td><em>90,000</em></td>
+							</tr>
+							<tr>
+								<td><em><i class="ind2"></i>Average Number of Customers in Previous Week</em></td>
+								<td><em>1,057,305</em></td>
+								<td><em>1,715,957</em></td>
+								<td><em>1,00,000</em></td>
+								<td><em>78,000</em></td>
+							</tr>
+						</table>
+					</div>
+				</div>
+			</div>
+		</section>
+		<section>
+			<h1>Chart 3 - Channel Analytics | Percetage Difference</h1>
+			<div class="chart-box">
+				<div class="chart-area">
+					<canvas id="caPerDifference" width="300" height="100"></canvas>
+					<div class="cachartdatatable tblperdiff">
+						<table>
+							<tr>
+								<th></th>
+								<th><em>Online</em></th>
+								<th><em>Mobile</em></th>
+								<th><em>ATM</em></th>
+								<th><em>POS</em></th>
+							</tr>
+							<tr>
+								<td><em><i class="ind3"></i>Percentage Difference</em></td>
+								<td><em>0.35%</em></td>
+								<td><em>0.10%</em></td>
+								<td><em>-11.00%</em></td>
+								<td><em>-15.30%</em></td>
+							</tr>
+						</table>
+					</div>
 				</div>
 			</div>
 		</section>
@@ -58,6 +178,22 @@
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/chartjs-plugin-annotation/2.0.0/chartjs-plugin-annotation.min.js"></script>
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/chartjs-plugin-datalabels/2.1.0/chartjs-plugin-datalabels.min.js"></script>
 		<script type="text/javascript">
+			/* variables */
+			var vrchartfont = "Avenir, Segoe UI, arial, sans-serif";
+
+			var dlbls_barvalue = "#dddddd";
+			var title_charttitle = "white";
+			var title_ylabel = "white";
+			var title_xlabel = "white";
+
+			var ygrid_bordercolor = "#444444",
+				  ygrid_color = "#444444",
+				  xgrid_bordercolor = "#444444",
+				  xgrid_color = "#444444";
+
+			var ytick_color = "#aaa",
+				  xtick_color = "#aaa";
+
 			/* //Chart 1 - Channel Analytics | Transaction Volume Hourly */
 			function createChartTxnValHr() {
 
@@ -67,7 +203,7 @@
 
 				var grbackground_1 = ctxctvh.createLinearGradient(0, 0, 0, 300);
 				grbackground_1.addColorStop(0, 'rgb(42, 95, 245)'); // final 102,129,197
-				grbackground_1.addColorStop(1, 'rgb(13, 86, 212)'); //2a5ff5 - final 62,97,181
+				grbackground_1.addColorStop(1, 'rgb(13, 86, 212)'); //2a5ff5 - final 62,97,181 
 
 				var ctvhchartDataxLabel = [
 					"N01","N02","N03","N04","N05","N06","N07","N09","N08","N10","N11","N12","N13","N14","N15","N16","N18","N17","N19","N20","N21","N22","N23", "N24"
@@ -113,7 +249,8 @@
 							label: 'Transaction Amount',
 							data: ctvhchartDatayData,/*[12, 19, 3, 5, 2, 3],*/
 							//backgroundColor: ["#818cf8"],/*[
-							backgroundColor: [ grbackground_1 ], /*
+							//backgroundColor: [ grbackground_1 ], 
+							backgroundColor: ["#0096FF"],/* 1363DF
 							'rgba(255, 99, 132, 0.2)',
 							'rgba(54, 162, 235, 0.2)',
 							'rgba(255, 206, 86, 0.2)',
@@ -133,11 +270,12 @@
 					// data: data1,
 
 					font: {
-						family: "Avenir, Segoe UI, arial, sans-serif",
+						family: vrchartfont,
 					},
 
 					options: {
 						responsive: true,
+						maintainAspectRatio: false,
 						// aspectRatio: 3,
 						/*layout: {
 							padding: 20,
@@ -149,19 +287,19 @@
 							title: {
 								display: true,
 								text: "Transaction Volume Hourly",
-								color: "white",
+								color: title_charttitle,
 								padding: {
 									bottom: 15,
 								},
 								font: {
-									family: "Avenir, Segoe UI, arial, sans-serif",
+									family: vrchartfont,
 									size: 20,
 									weight: "500",
 								},
-							},
+							}, // title
 
 							//average line
-							autocolors: false,
+							// autocolors: false,
 							annotation: {
 								annotations: {
 									line1: {
@@ -178,15 +316,16 @@
 
 							//datalabels 
 							datalabels: {
-								color: "#dddddd",
+								color: dlbls_barvalue,
 								align: "top",
 								anchor: "end",
 								font: {
-									family: "Avenir, Segoe UI, arial, sans-serif",
+									family: vrchartfont,
 								},
-								// formatter: function (val, ctx) {
-								// 	return thousands_separators(val);
-								// },
+								formatter: function (val, ctx) {
+								// 	return "$ " + thousands_separators(val);
+									return thousands_separators(val);
+								},
 							},
 
 							tooltip: {
@@ -194,7 +333,7 @@
 								xAlign: "center",
 								yAlign: "bottom",
 								font: {
-									family: "Avenir, Segoe UI, arial, sans-serif",
+									family: vrchartfont,
 								},
 								callbacks: {
 									label: function (cntx) {
@@ -207,9 +346,9 @@
 									},
 								},
 								padding: 10
-							},
+							}, // tooltip
 
-						}, //plugin
+						}, // plugin
 
 						scales: {
 							y: {
@@ -217,20 +356,20 @@
 								title: {
 									text: "Amount",
 									display: true,
-									color: "#ffffff",
+									color: title_ylabel,
 									font: {
 										size: 14,
 										// weight: "bold",
-										// family: "Avenir, Segoe UI, arial, sans-serif",
+										family: vrchartfont,
 										// family: "Segoe UI, arial, sans-serif",
 									},
 								}, //title
 								beginAtZero: true,
 								ticks: {
-									color: "#aaa",
+									color: title_xlabel,
 									// stepSize: 5000,
 									font: {
-										// family: "Avenir, Segoe UI, arial, sans-serif",
+										family: vrchartfont,
 									},
 									callback: function(v,i,t) {
 										return "$ " + thousands_separators(v);
@@ -247,22 +386,22 @@
 								title: {
 									text: "Hourly Report",
 									display: true,
-									color: "#ffffff",
+									color: title_xlabel,
 									font: {
 										size: 14,
 										// weight: "bold",
-										// family: "Avenir, Segoe UI, arial, sans-serif",
+										family: vrchartfont,
 									},
 								},
 								ticks: {
-									color: "#aaa",
+									color: xtick_color,
 									font: {
-										// family: "Avenir, Segoe UI, arial, sans-serif",
+										family: vrchartfont,
 									},
 								},
 								grid: {
-									borderColor: "#555",
-									color: 'transparent',
+									borderColor: xgrid_bordercolor,
+									color: "transparent",
 								},
 							} //x
 						}, //scales
@@ -290,10 +429,310 @@
 				createChartTxnValHr();
 
 				/* //Chart 2 - Channel Analytics | Customer Overview */
-				function createChartcustoverview() {
-					// body...
+				function createChartCustOverview() {
+					var ccanvco = document.getElementById('caCustOverview');
+					var ctxcco = ccanvco.getContext('2d');
+
+					var ccochartDataxLabel = [
+						"Online","Mobile","ATM","POS"
+					];
+					var ccochartDatayData = [
+						{
+							label: "Last Completed Week",
+							backgroundColor: "#A2B5BB",
+							data: [ 1061004, 1717591, 89000, 90000 ],
+							maxBarThickness: 50,
+						},
+						{
+							label: "Previous Week",
+							backgroundColor: "#495C83",
+							data: [ 1057305, 1715957, 100000, 78000 ],
+							maxBarThickness: 50,
+						}
+					];
+
+					var caco = new Chart(ctxcco, {
+						type: 'bar',
+						data: {
+							labels: ccochartDataxLabel,
+							datasets: ccochartDatayData,
+						},
+						options: {
+							// responsive: true,
+							// maintainAspectRatio: false,
+							plugins: {
+								legend: {
+									display: false,
+								},
+								title: {
+									display: true,
+									text: "Customer Overview",
+									color: title_charttitle,
+									padding: {
+										bottom: 15,
+									},
+									font: {
+										family: vrchartfont,
+										size: 20,
+										weight: "500",
+									},
+								}, // title
+
+								datalabels: {
+									color: dlbls_barvalue,
+									align: "top",
+									anchor: "end",
+									font: {
+										family: vrchartfont,
+									},
+									formatter: function (val, ctx) {
+									// 	return "$ " + thousands_separators(val);
+										return thousands_separators(val);
+									},
+								},
+
+								tooltip: {
+									position: "nearest",
+									xAlign: "center",
+									yAlign: "bottom",
+									font: {
+										family: vrchartfont,
+									},
+									callbacks: {
+										label: function (cntx) {
+											//console.log(cntx);
+											return " " + thousands_separators(cntx.parsed.y);
+										},
+										title: function (cntx) {
+											// console.log('title ',cntx);
+											return "Channel - " + cntx[0].label;
+										},
+									},
+									padding: 10
+								}, // tooltip
+
+								// maxBarThickness: 20,
+
+							}, // plugins 
+
+							scales: {
+								y: {
+									beginAtZero: true,
+									title: {
+										text: "Number of Customers",
+										display: true,
+										color: title_ylabel,
+										font: {
+											size: 14,
+											// weight: "bold",
+											family: vrchartfont,
+											// family: "Segoe UI, arial, sans-serif",
+										},
+									},
+									ticks: {
+										color: ytick_color,
+										font: {
+											family: vrchartfont,
+										},
+									},
+									grid: {
+										borderColor: ygrid_bordercolor,
+										color: ygrid_color,
+									},
+									max: 2000000,
+									min: 0,
+								},
+								x: {
+									title: {
+										text: "Channels",
+										display: true,
+										color: title_xlabel,
+										font: {
+											size: 14, 
+											family: vrchartfont,
+										},
+									},
+									ticks: {
+										color: xtick_color,
+										font: {
+											family: vrchartfont,
+										},
+									},
+									grid: {
+										borderColor: xgrid_bordercolor,
+										color: xgrid_color,
+									},
+								},
+							}, //scales
+
+						}, // options
+					});
+
+					// var catvh = new Chart(ctxctvh, {
+					// type: 'bar',
+					// data: {
 				}
-				createChartcustoverview();
+				createChartCustOverview();
+
+				function createChartPerDifference() {
+					var ccanvpd = document.getElementById('caPerDifference');
+					var ctxcpd = ccanvpd.getContext('2d');
+
+					var cpdchartDataxLabel = [
+						"Online","Mobile","ATM","POS"
+					];
+					var cpdchartDatayData = [
+						{
+							label: "Percentage Difference",
+							backgroundColor: "#FFA500",
+							data: [ 0.35, 0.1, -11, 15.3 ],
+							maxBarThickness: 50,
+						}
+					];
+
+					var capd = new Chart(ctxcpd, {
+						type: "bar",
+						data: {
+							labels: cpdchartDataxLabel,
+							datasets: cpdchartDatayData,
+						},
+						options: {
+
+							plugins: {
+
+								legend: {
+									display: false,
+								},
+
+								title: {
+									display: true,
+									text: "Percentage Difference",
+									color: title_charttitle,
+									padding: {
+										bottom: 15,
+									},
+									font: {
+										family: vrchartfont,
+										size: 20,
+										weight: "500",
+									},
+								}, // title
+
+								annotation: {
+									annotations: {
+										line1: {
+											type: "line",
+											yMin: 0,
+											yMax: 0,
+											borderColor: "#999", //e51529 - 2a5ff5
+											borderWidth: 1,
+										}, //line1
+									}, //annotations
+								}, //annotation
+
+								datalabels: {
+									color: dlbls_barvalue,
+									// align: "top",
+									align: function(v){
+										// if (v.data <)
+										//console.log('v = ', v.dataset.data[v.dataIndex]);
+										if (v.dataset.data[v.dataIndex] > 0) {
+											return "top";
+										} else {
+											return "bottom";
+										}
+									},
+									anchor: function(v){
+										// if (v.data <)
+										// console.log('v = ', v.dataset.data[v.dataIndex]);
+										if (v.dataset.data[v.dataIndex] > 0) {
+											return "end";
+										} else {
+											return "start";
+										}
+									},
+									// anchor: "end",
+									font: {
+										family: vrchartfont,
+									},
+									formatter: function (val, ctx) {
+									// 	return "$ " + thousands_separators(val);
+										// if (val < 0) {console.log('ctx is = ', ctx);return ctx;};
+										return thousands_separators(val);
+									},
+								}, // datalables
+
+								tooltip: {
+									position: "nearest",
+									xAlign: "center",
+									yAlign: function (vx1, cx1) {
+										// console.log('vvvv = ', vx1.tooltip.dataPoints[0].parsed.y);
+										var dbarval = vx1.tooltip.dataPoints[0].parsed.y;
+										if (dbarval < 0)
+											return "top"
+										else 
+											return "bottom"
+										// console.log('cccc = ', cx);
+										// return "top";
+									},
+									// yAlign: "bottom",
+									font: {
+										family: vrchartfont,
+									},
+								},
+
+							}, // plugins
+
+							scales: {
+								y: {
+									title:{
+										text: "Percentage",
+										display: true,
+										color: title_ylabel,
+										font: {
+											family: vrchartfont,
+										},
+									},
+									ticks:{
+										color: ytick_color,
+										font: {
+											family: vrchartfont,
+										},
+									},
+									grid:{
+										borderColor: "transparent",
+										color: ygrid_color,
+									},
+								},
+								x: {
+									// title: {},
+									ticks: {
+										color: xtick_color,
+										font: {
+											family: vrchartfont,
+										},
+									},
+									grid: {
+										borderColor: xgrid_bordercolor,
+										color: "transparent",
+									},
+								},
+							},
+
+						}, // options
+					});
+				}
+				createChartPerDifference();
+
+				/*
+var caco = new Chart(ctxcco, {
+						type: 'bar',
+						data: {
+							labels: ccochartDataxLabel,
+							datasets: ccochartDatayData,
+						},
+						options: {
+				*/
 
 				function thousands_separators(num) {
 					var num_parts = num.toString().split(".");
