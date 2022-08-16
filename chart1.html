@@ -665,17 +665,7 @@
 								tooltip: {
 									position: "nearest",
 									xAlign: "center",
-									yAlign: function (vx1, cx1) {
-										// console.log('vvvv = ', vx1.tooltip.dataPoints[0].parsed.y);
-										var dbarval = vx1.tooltip.dataPoints[0].parsed.y;
-										if (dbarval < 0)
-											return "top"
-										else 
-											return "bottom"
-										// console.log('cccc = ', cx);
-										// return "top";
-									},
-									// yAlign: "bottom",
+									yAlign: "bottom",
 									font: {
 										family: vrchartfont,
 									},
