@@ -1,0 +1,1058 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<!-- <meta name="viewport" content="width=device-width, initial-scale=1"> -->
+		<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+		<title>Brain Bank - ATM</title>
+		<style type="text/css">
+			* {
+				margin: 0;
+				padding: 0;
+				font-family: "Avenir", "Segoe UI", arial, sans-serif;
+			}
+			body {
+				/*padding: 20px;*/
+				background: #f1f5f9;
+			}
+			section {
+				height: calc(100vh - 80px); 
+				padding: 40px;
+				border-bottom: 1px solid #ddd;
+			}
+			h1 {
+				font-weight: normal;
+				padding: 0 0 15px;
+			}
+
+			/* chart CSS */
+			.chart-box {
+				background: white;
+				border-radius: 16px;
+				padding: 20px;
+				box-shadow: rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0.1) 0px 1px 3px 0px, rgba(0, 0, 0, 0.1) 0px 1px 2px -1px;
+			}
+			.chart-area {
+				background: #2a2a2a;
+				padding: 15px;
+			}
+			.chart-area2 {
+				background: rgb(32, 41, 57);
+				padding: 15px;
+			}
+			.chart-area3 {
+				/*background: rgb(32, 41, 57);*/
+				/*padding: 0;*/
+				background: white;
+			}
+			.charttmgradientbar {
+				height: 16px;
+				background: #aaa;
+			}
+		</style>
+	</head>
+	<body>
+		<section>
+			<h1>Chart 1 - ATM | Weekly Transaction Volume Performance</h1>
+			<div class="chart-box">
+				<div class="chart-area">
+					<canvas id="catmWeeklyTxnPer" width="600" height="500"></canvas>
+				</div>
+			</div>
+		</section>
+		<section>
+			<h1>Chart 2 - ATM | Fleet Interaction Success Rate</h1>
+			<div class="chart-box">
+				<div class="chart-area">
+					<canvas id="catmFleetInsSuRate" width="600" height="500"></canvas>
+				</div>
+			</div>
+		</section>
+		<section>
+			<h1>Chart 3 - ATM | ATM Failure (Previous Day)</h1>
+			<div class="chart-box">
+				<div class="chart-area">
+					<canvas id="catmFailurePrevDay" width="600" height="500"></canvas>
+				</div>
+			</div>
+		</section>
+		<section>
+			<h1>Chart 4 - ATM | Top/Bottom 5 Performers by Volume (Last 7 Days)</h1>
+			<div class="chart-box">
+				<div class="chart-area3">
+					<canvas id="catmTopBotPerformersVol" width="600" height="500"></canvas>
+				</div>
+			</div>
+		</section>
+		<section>
+			<h1>Chart 5 - ATM | ATM Positioning</h1>
+			<div class="chart-box">
+				<div class="chart-area3">
+					<canvas id="catmgeoATMPositioning" width="600" height="500"></canvas>
+				</div>
+			</div>
+		</section>
+		<section>
+			<h1>Chart 6 - ATM | ATM Selector</h1>
+			<div class="chart-box">
+				<div class="chart-area3">
+					<canvas id="catmgeoATMSelector" width="600" height="500"></canvas>
+				</div>
+			</div>
+		</section>
+		<section>
+			<h1>Chart 7 - ATM | Customer Density</h1>
+			<div class="chart-box">
+				<div class="chart-area3">
+					<canvas id="cageoATMCustomerDensity" width="600" height="500"></canvas>
+				</div>
+			</div>
+		</section>
+		<section>
+			<h1>Chart 8 - ATM | Geographical ATM Transaction</h1>
+			<div class="chart-box">
+				<div class="chart-area3">
+					<canvas id="cageoATMTransactions" width="600" height="500"></canvas>
+				</div>
+			</div>
+		</section>
+		<section>
+			<h1>Chart 9 - ATM | Mix Transactions</h1>
+			<div class="chart-box">
+				<div class="chart-area3">
+					<canvas id="catmATMMixTransactions" width="600" height="500"></canvas>
+					<p>The Bar (remove this em when you integrate)</p>
+					<div id="ctmtxnmixgradientbar" class="charttmgradientbar"></div>
+				</div>
+				<!-- <div class="charttmgradientbar"></div> -->
+			</div>
+		</section>
+		<script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/chartjs-plugin-annotation/2.0.0/chartjs-plugin-annotation.min.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/chartjs-plugin-datalabels/2.1.0/chartjs-plugin-datalabels.min.js"></script>
+		<script src="https://cdn.jsdelivr.net/npm/chartjs-chart-treemap@2.0.2/dist/chartjs-chart-treemap.min.js"></script>
+		<script src="https://cdn.jsdelivr.net/npm/chartjs-chart-geo@3.9.0/build/index.umd.min.js"></script>
+		<script type="text/javascript">
+			/* variables */
+			var vrchartfont = "Avenir, Segoe UI, arial, sans-serif";
+
+			var dlbls_barvalue = "#dddddd";
+			var title_charttitle = "white";
+			var title_charttitle2 = "#666666";
+			var title_ylabel = "white";
+			var title_xlabel = "white";
+
+			var legend_textcolor = "#dddddd";
+
+			var ygrid_bordercolor = "#444444",
+				  ygrid_color = "#444444",
+				  xgrid_bordercolor = "#444444",
+				  xgrid_color = "#444444";
+
+			var ytick_color = "#aaa",
+				  xtick_color = "#aaa";
+
+			/* //Chart 1 - ATM | Weekly Transaction Volume Performance */
+			function createChartATMWeeklyTxnVolPer() {
+				//console.log("Chart 1 - Weekly Transaction Volume Performance");
+				var eatmwtxnp = document.getElementById("catmWeeklyTxnPer");
+				var ctxatmwtxnp = eatmwtxnp.getContext("2d");
+
+				var cdxLabelatmwtxnvp = [
+					"Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"
+				];
+				var cdyDataatmwtxnvp = [
+					{
+						label: "Current Week",
+						data: [ 64945, 96844, 84316, 92964, 46234, 98947, 36035 ],
+						backgroundColor: "#FFA500",
+						borderColor: "#FFA500",
+						pointRadius: 0,
+					},
+					{
+						label: "Last Week",
+						data: [ 45825, 75729, 66231, 31368, 66741, 75215, 34201 ],
+						backgroundColor: "#B270A2",
+						borderColor: "#B270A2",
+						pointRadius: 0,
+					},
+					{
+						label: "Last Year",
+						data: [ 63481, 25489, 45686, 35209, 30686, 34010, 30569 ],
+						backgroundColor: "#6CC4A1",
+						borderColor: "#6CC4A1",
+						pointRadius: 0,
+					},
+				];
+
+				Chart.register(ChartDataLabels);
+
+				var chartatmwtxnp = new Chart(ctxatmwtxnp, {
+					type: "line",
+					data: {
+						labels: cdxLabelatmwtxnvp,
+						datasets: cdyDataatmwtxnvp,
+						tension: 0.1,
+					},
+					options: {
+						// responsive: true,
+						// maintainAspectRatio: false,
+						plugins: {
+							legend: {
+								display: true,
+								position: "bottom",
+								labels: {
+									padding: 20,
+									color: legend_textcolor,
+									font: {
+										family: vrchartfont,
+									},
+								}, // labels 
+							},
+							title: {
+								display: true,
+								text: "Weekly Transaction Volume Performance",
+								color: title_charttitle,
+								padding: {
+									bottom: 15,
+								},
+								font: {
+									family: vrchartfont,
+									size: 20,
+									weight: "500",
+								},
+							}, // title
+
+							datalabels: {
+								display: false,
+							}, // datalabels 
+
+							tooltip: {
+								position: "nearest",
+								xAlign: "center",
+								yAlign: "bottom",
+								bodyFont: {
+									family: vrchartfont,
+								},
+								callbacks: {
+									label: function (cntx) {
+										//console.log(cntx);
+										return " " + thousands_separators(cntx.parsed.y);
+									},
+									title: function (cntx) {
+										// console.log('title ',cntx);
+										return "Channel - " + cntx[0].label;
+									},
+								},
+								padding: 10,
+							}, // tooltip
+
+						}, // plugins 
+
+						scales: {
+							y: {
+								beginAtZero: true,
+								title: {
+									text: "Transaction Volume",
+									display: true,
+									color: title_ylabel,
+									font: {
+										size: 14,
+										// weight: "bold",
+										family: vrchartfont,
+										// family: "Segoe UI, arial, sans-serif",
+									},
+								}, // title 
+								ticks: {
+									color: ytick_color,
+									font: {
+										family: vrchartfont,
+									},
+								}, // ticks
+								grid: {
+									borderColor: ygrid_bordercolor,
+									color: ygrid_color,
+								}, // grid
+							}, // y
+							x: {
+								ticks: {
+									color: xtick_color,
+									font: {
+										family: vrchartfont,
+									},
+								}, // ticks
+								grid: {
+									borderColor: "transparent",
+									color: "transparent",
+								}, // grid
+							}, // x
+						}, // scales 
+
+					}, // options 
+				});
+			}
+			createChartATMWeeklyTxnVolPer();
+
+			/* //Chart 2 - ATM | Fleet Interaction Success Rate */
+			function createChartATMFleetIntSucRate() {
+				//console.log("Chart 2 - Fleet Interaction Success Rate");
+				var eatmfleetintsurate = document.getElementById("catmFleetInsSuRate");
+				var ctxatmfleetintsurate = eatmfleetintsurate.getContext("2d");
+
+				var cdxLabelatmfleetinsurate = [
+					"Previous Day", "Last 7 Days", "Last 30 days"
+				];
+				var cdyDataatmfleetinsurate = [
+					"97.79", "94.40", "94.36"
+				];
+
+				var chartatmfisr = new Chart(ctxatmfleetintsurate, {
+					type: "bar",
+					data: {
+						labels: cdxLabelatmfleetinsurate,
+						datasets: [{
+							label: "Label",
+							data: cdyDataatmfleetinsurate,
+							backgroundColor: "#6CC4A1",
+							maxBarThickness: 50,
+						}],
+					},
+					
+					options: {
+						// responsive: true,
+						// maintainAspectRatio: false,
+						
+						plugins: {
+							
+							legend: {
+								display: false,
+							}, // legend
+
+							title: {
+								display: true,
+								text: "Fleet Interaction Success Rate",
+								color: title_charttitle,
+								padding: {
+									bottom: 15,
+								},
+								font: {
+									family: vrchartfont,
+									size: 20,
+									weight: "500",
+								},
+							}, // title
+
+							datalabels: {
+								color: dlbls_barvalue,
+								align: "top",
+								anchor: "end",
+								font: {
+									family: vrchartfont,
+								},
+								formatter: function (val, ctx) {
+									return val + " %";
+								},
+							}, // datalabels 
+
+							tooltip: {
+								position: "nearest",
+								xAlign: "center",
+								yAlign: "bottom",
+								bodyFont: {
+									family: vrchartfont,
+								},
+								callbacks: {
+									label: function (cntx) {
+										return cntx.parsed.y + "%";
+									},
+									title: function (cntx) {
+										return cntx[0].label;
+									},
+								},
+								padding: 10,
+							}, // tooltip
+
+						}, // plugins
+
+						scales: {
+							y: {
+								beginAtZero: false,
+								title: {
+									text: "Percentage",
+									display: true,
+									color: title_ylabel,
+									font: {
+										size: 14,
+										family: vrchartfont,
+									},
+								}, // title 
+								ticks: {
+									color: ytick_color,
+									font: {
+										family: vrchartfont,
+									},
+								}, // ticks
+								grid: {
+									borderColor: ygrid_bordercolor,
+									color: ygrid_color,
+								}, // grid
+							}, // y
+							x: {
+								title: {
+									text: "Time Period",
+									display: true,
+									color: title_xlabel,
+									font: {
+										size: 14,
+										family: vrchartfont,
+									},
+								}, // title 
+								ticks: {
+									color: xtick_color,
+									font: {
+										family: vrchartfont,
+									},
+								}, // ticks
+								grid: {
+									borderColor: "transparent",
+									color: "transparent",
+								}, // grid
+							}, // x
+						}, // scales 
+
+					}, // options
+
+				}); // Chart
+			}
+			createChartATMFleetIntSucRate();
+
+			/* //Chart 2 - ATM | ATM Failure (Previous Day) */
+			function createChartATMFailurePrevDay() {
+				//console.log("Chart 3 - ATM Failure (Previous Day)");
+
+				var eatmfailureprevday = document.getElementById("catmFailurePrevDay");
+				var ctxatmfailureprevday = eatmfailureprevday.getContext("2d");
+
+				var cdxLabelatmfailureprevday = [
+					"User Error", "Unsupported Service", "Unavailable Service", "Deposit Dispense Error"
+				];
+				var cdyDataatmfailureprevday = [
+					0.28, 17.02, 1.05, 70.53
+				];
+
+				var chartatmfailpd = new Chart(ctxatmfailureprevday, {
+					type: "pie",
+					data: {
+						labels: cdxLabelatmfailureprevday,
+						datasets: [{
+							data: cdyDataatmfailureprevday,
+							backgroundColor: ["#FFA500", "#6CC4A1", "#B270A2", "#495C83" ],
+							borderColor: "transparent",
+						}],
+					}, // data 
+
+					options: {
+						plugins: {
+
+							legend: {
+								display: true,
+								position: "bottom",
+								labels: {
+									padding: 20,
+									color: legend_textcolor,
+									font: {
+										family: vrchartfont,
+									},
+								}, // labels 
+							}, // lengend 
+
+							title: {
+								display: true,
+								text: "ATM Failure",
+								color: title_charttitle,
+								padding: {
+									bottom: 5,
+								},
+								font: {
+									family: vrchartfont,
+									size: 20,
+									weight: "500",
+								},
+							}, // title
+							subtitle: {
+								display: true,
+								text: "(Previous Day)",
+								color: title_charttitle,
+								// align: "start",
+								padding: {
+									bottom: 40,
+								},
+								font: {
+									family: vrchartfont,
+									size: 14,
+									// weight: "500",
+								},
+							}, // subtitle
+
+							datalabels: {
+								color: dlbls_barvalue,
+								// align: "top",
+								// anchor: "end",
+								font: {
+									family: vrchartfont,
+								},
+								formatter: function (val, ctx) {
+									return val + " %";
+								},
+								labels: {
+									index: {
+										align: "end",
+										anchor: "end",
+										font: {size: 15},
+									}, // index
+								}, // labels
+							}, // datalabels 
+
+							tooltip: {
+								position: "nearest",
+								xAlign: "center",
+								yAlign: "bottom",
+								bodyFont: {
+									family: vrchartfont,
+								},
+								callbacks: {
+									label: function (c) {
+										return c.parsed + "%";
+									},
+									title: function (cntx) {
+										return cntx[0].label;
+									},
+								},
+								padding: 10,
+							}, // tooltip
+
+						}, // plugins 
+					}, // options
+
+				}); // Chart
+			}
+			createChartATMFailurePrevDay();
+
+			/* //Chart 4 - ATM | Top / Bottom 5 Performers by Volume (Last 7 Days) */
+			function createChartATMTopBotWPerVol() {
+				//console.log("Chart 4 - Top / Bottom 5 Performers by Volume (Last 7 Days)");
+				var eatmtopbotpervol = document.getElementById("catmTopBotPerformersVol");
+				var ctxatmtopbotpervol = eatmtopbotpervol.getContext("2d");
+
+				var cdDataatmTopBotWPVol = [
+					{
+						"name": "Alabama",
+						"description": "Montgomery",
+						"latitude": 32.377716,
+						"longitude": -86.300568
+					},
+					{
+						"name": "Alaska",
+						"description": "Juneau",
+						"latitude": 58.301598,
+						"longitude": -134.420212
+					},
+					{
+						"name": "Arizona",
+						"description": "Phoenix",
+						"latitude": 33.448143,
+						"longitude": -112.096962
+					},
+					{
+						"name": "Arkansas",
+						"description": "Little Rock",
+						"latitude": 34.746613,
+						"longitude": -92.288986
+					},
+					{
+						"name": "California",
+						"description": "Sacramento",
+						"latitude": 38.576668,
+						"longitude": -121.493629
+					},
+					{
+						"name": "Colorado",
+						"description": "Denver",
+						"latitude": 39.739227,
+						"longitude": -104.984856
+					},
+					{
+						"name": "Connecticut",
+						"description": "Hartford",
+						"latitude": 41.764046,
+						"longitude": -72.682198
+					},
+					{
+						"name": "Delaware",
+						"description": "Dover",
+						"latitude": 39.157307,
+						"longitude": -75.519722
+					},
+					{
+						"name": "Hawaii",
+						"description": "Honolulu",
+						"latitude": 21.307442,
+						"longitude": -157.857376
+					},
+					{
+						"name": "Florida",
+						"description": "Tallahassee",
+						"latitude": 30.438118,
+						"longitude": -84.281296
+					},
+					{
+						"name": "Georgia",
+						"description": "Atlanta",
+						"latitude": 33.749027,
+						"longitude": -84.388229
+					},
+					{
+						"name": "Idaho",
+						"description": "Boise",
+						"latitude": 43.617775,
+						"longitude": -116.199722
+					},
+					{
+						"name": "Illinois",
+						"description": "Springfield",
+						"latitude": 39.798363,
+						"longitude": -89.654961
+					},
+					{
+						"name": "Indiana",
+						"description": "Indianapolis",
+						"latitude": 39.768623,
+						"longitude": -86.162643
+					},
+					{
+						"name": "Iowa",
+						"description": "Des Moines",
+						"latitude": 41.591087,
+						"longitude": -93.603729
+					},
+					{
+						"name": "Kansas",
+						"description": "Topeka",
+						"latitude": 39.048191,
+						"longitude": -95.677956
+					},
+					{
+						"name": "Kentucky",
+						"description": "Frankfort",
+						"latitude": 38.186722,
+						"longitude": -84.875374
+					},
+					{
+						"name": "Louisiana",
+						"description": "Baton Rouge",
+						"latitude": 30.457069,
+						"longitude": -91.187393
+					},
+					{
+						"name": "Maine",
+						"description": "Augusta",
+						"latitude": 44.307167,
+						"longitude": -69.781693
+					},
+					{
+						"name": "Maryland",
+						"description": "Annapolis",
+						"latitude": 38.978764,
+						"longitude": -76.490936
+					},
+					{
+						"name": "Massachusetts",
+						"description": "Boston",
+						"latitude": 42.358162,
+						"longitude": -71.063698
+					},
+					{
+						"name": "Michigan",
+						"description": "Lansing",
+						"latitude": 42.733635,
+						"longitude": -84.555328
+					},
+					{
+						"name": "Minnesota",
+						"description": "St. Paul",
+						"latitude": 44.955097,
+						"longitude": -93.102211
+					},
+					{
+						"name": "Mississippi",
+						"description": "Jackson",
+						"latitude": 32.303848,
+						"longitude": -90.182106
+					},
+					{
+						"name": "Missouri",
+						"description": "Jefferson City",
+						"latitude": 38.579201,
+						"longitude": -92.172935
+					},
+					{
+						"name": "Montana",
+						"description": "Helena",
+						"latitude": 46.585709,
+						"longitude": -112.018417
+					},
+					{
+						"name": "Nebraska",
+						"description": "Lincoln",
+						"latitude": 40.808075,
+						"longitude": -96.699654
+					},
+					{
+						"name": "Nevada",
+						"description": "Carson City",
+						"latitude": 39.163914,
+						"longitude": -119.766121
+					},
+					{
+						"name": "New Hampshire",
+						"description": "Concord",
+						"latitude": 43.206898,
+						"longitude": -71.537994
+					},
+					{
+						"name": "New Jersey",
+						"description": "Trenton",
+						"latitude": 40.220596,
+						"longitude": -74.769913
+					},
+					{
+						"name": "New Mexico",
+						"description": "Santa Fe",
+						"latitude": 35.68224,
+						"longitude": -105.939728
+					},
+					{
+						"name": "North Carolina",
+						"description": "Raleigh",
+						"latitude": 35.78043,
+						"longitude": -78.639099
+					},
+					{
+						"name": "North Dakota",
+						"description": "Bismarck",
+						"latitude": 46.82085,
+						"longitude": -100.783318
+					},
+					{
+						"name": "New York",
+						"description": "Albany",
+						"latitude": 42.652843,
+						"longitude": -73.757874
+					},
+					{
+						"name": "Ohio",
+						"description": "Columbus",
+						"latitude": 39.961346,
+						"longitude": -82.999069
+					},
+					{
+						"name": "Oklahoma",
+						"description": "Oklahoma City",
+						"latitude": 35.492207,
+						"longitude": -97.503342
+					},
+					{
+						"name": "Oregon",
+						"description": "Salem",
+						"latitude": 44.938461,
+						"longitude": -123.030403
+					},
+					{
+						"name": "Pennsylvania",
+						"description": "Harrisburg",
+						"latitude": 40.264378,
+						"longitude": -76.883598
+					},
+					{
+						"name": "Rhode Island",
+						"description": "Providence",
+						"latitude": 41.830914,
+						"longitude": -71.414963
+					},
+					{
+						"name": "South Carolina",
+						"description": "Columbia",
+						"latitude": 34.000343,
+						"longitude": -81.033211
+					},
+					{
+						"name": "South Dakota",
+						"description": "Pierre",
+						"latitude": 44.367031,
+						"longitude": -100.346405
+					},
+					{
+						"name": "Tennessee",
+						"description": "Nashville",
+						"latitude": 36.16581,
+						"longitude": -86.784241
+					},
+					{
+						"name": "Texas",
+						"description": "Austin",
+						"latitude": 30.27467,
+						"longitude": -97.740349
+					},
+					{
+						"name": "Utah",
+						"description": "Salt Lake City",
+						"latitude": 40.777477,
+						"longitude": -111.888237
+					},
+					{
+						"name": "Vermont",
+						"description": "Montpelier",
+						"latitude": 44.262436,
+						"longitude": -72.580536
+					},
+					{
+						"name": "Virginia",
+						"description": "Richmond",
+						"latitude": 37.538857,
+						"longitude": -77.43364
+					},
+					{
+						"name": "Washington",
+						"description": "Olympia",
+						"latitude": 47.035805,
+						"longitude": -122.905014
+					},
+					{
+						"name": "West Virginia",
+						"description": "Charleston",
+						"latitude": 38.336246,
+						"longitude": -81.612328
+					},
+					{
+						"name": "Wisconsin",
+						"description": "Madison",
+						"latitude": 43.074684,
+						"longitude": -89.384445
+					},
+					{
+						"name": "Wyoming",
+						"description": "Cheyenne",
+						"latitude": 41.140259,
+						"longitude": -104.820236
+					}
+				];
+
+				// var tstates = ChartGeo.topojson.feature(us, us.objects.states).features;
+
+				// var us = cdDataatmTopBotWPVol;
+
+				// var us = await fetch('https://unpkg.com/us-atlas/states-10m.json').then((r) => r.json());
+
+				var nation = ChartGeo.topojson.feature(us, us.objects.nation).features[0];
+
+				var chartatmtopbotpervol = new Chart(eatmtopbotpervol, {
+					type: 'bubbleMap', 
+					data: {
+						labels: ['Alaska', 'California'], 
+						datasets: [{
+							label: "States",
+							outline: nation,
+							showOutline: true,
+							data: [
+								{
+									value: 0.4,
+									feature: alaska,
+								},
+								{
+									value: 0.3,
+									feature: california,
+								},
+							],
+						}],
+					}, // data
+					options: {
+						scales: {
+							xy: {
+								projection: 'albersUsa'
+							},
+						},
+					}, // options
+				});
+			}
+			//createChartATMTopBotWPerVol();
+
+			/* //Chart 5 - ATM | ATM Positioning */
+			function createChartATMPositioning() {
+				// console.log("Chart 5 - ATM Positioning");
+				var eatmpositioning = document.getElementById("catmgeoATMPositioning");
+				var ctxatmpositioning = eatmpositioning.getContext("2d");
+			}
+			//createChartATMPositioning();
+
+			/* //Chart 6 - ATM | ATM Selector */
+			function createChartATMSelector() {
+				// console.log("Chart 6 - ATM Selector");
+				var eatmselector = document.getElementById("catmgeoATMSelector");
+				var ctxatmselector = eatmselector.getContext("2d");
+			}
+			//createChartATMSelector();
+
+			/* //Chart 7 - ATM | Customer Density */
+			function createChartATMCustDensity() {
+				// console.log("Chart 7 - Customer Density");
+				var eatmcustdensity= document.getElementById("cageoATMCustomerDensity");
+				var ctxatmcustdensity = eatmcustdensity.getContext("2d");
+			}
+			//createChartATMCustDensity();
+
+			/* //Chart 8 - ATM | Geographical ATM Transaction */
+			function createChartATMGeoATMTxn() {
+				// console.log("Chart 8 - Geographical ATM Transaction");
+				var eatmgeoatmtxn= document.getElementById("cageoATMTransactions");
+				var ctxatmgeoatmtxn = eatmgeoatmtxn.getContext("2d");
+			}
+			//createChartATMGeoATMTxn();
+
+			/* //Chart 9 - ATM | ATM | Mix Transactions */
+			function createChartATMMixTransactions() {
+				// console.log("Chart 9 - ATM Mix Transactions");
+				var eatmmixtxn = document.getElementById("catmATMMixTransactions");
+				var ctxatmmixtxn = eatmmixtxn.getContext("2d");
+
+				var cdxyDataatmmixtxn = [
+					{ category: 'A', value: 20 },
+					{ category: 'B', value: 18 },
+					{ category: 'C', value: 10 },
+					{ category: 'D', value: 10 },
+					{ category: 'E', value: 10 },
+					{ category: 'F', value: 5 },
+					{ category: 'G', value: 5 },
+					{ category: 'H', value: 5 },
+					{ category: 'I', value: 4 },
+					{ category: 'J', value: 3 },
+				];
+
+				var getArrayofColors = getthenewcolorarray();
+				// console.log("type = [" + getArrayofColors + "]");
+
+				// console.log(cdxyDataatmtopbotpervol.reverse());
+
+				var chartatmtopbotpervol = new Chart(ctxatmmixtxn, {
+					type: "treemap",
+					data: {
+						datasets: [{
+							tree: cdxyDataatmmixtxn,
+							key: 'value',
+							// groups: ['category', 'value'],
+							// backgroundColor: "#6CC4A1", final 
+							// backgroundColor: [getthenewcolorarray],
+							// backgroundColor: colorFromRaw, //final
+							// backgroundColor: getthenewcolorarray,
+							backgroundColor: function (ctx) {
+								// console.log("ctx = back = ", getArrayofColors[ctx.index]);
+								return getArrayofColors[ctx.index];
+							}, 
+							labels: {
+								display: true,
+								color: "white",
+								font: {
+									size: 18,
+									family: vrchartfont,
+								},
+								formatter: function(ctx) {
+									// console.log("ctx = ", ctx.raw._data.category);
+									var tlb = ctx.raw._data.category;
+									var tvl = ctx.raw.v;
+									// return 'The Label is = ' + tlb + ' ||| And the Value is = ' + tvl;
+									return tlb;
+								},
+							}
+						}]
+					},
+					options: {
+						
+						plugins: {
+							datalabels: false,
+							legend: false,
+							title: {
+								display: true,
+								text: "Transaction Mix",
+								color: title_charttitle2,
+								padding: {
+									bottom: 15,
+								},
+								font: {
+									family: vrchartfont,
+									size: 20,
+									weight: "500",
+								},
+							}, // title
+							tooltip: {
+								position: "nearest",
+								xAlign: "center",
+								yAlign: "bottom",
+								bodyFont: {
+									family: vrchartfont,
+								},
+								callbacks: {
+									label: function (cntxa) {
+										//console.log(cntx);
+										var tlba = cntxa.raw._data.category;
+										var tvla = cntxa.raw.v;
+										return tvla;
+										return cntxa;
+									},
+									title: function (cntxb) {
+										// console.log('title ',cntx);
+										// return "Channel - " + cntx[0].label;
+										// var tlbb = cntxb.raw._data.category;
+										// var tvlb = cntxb.raw.v;
+										// return tlbb;
+										var di = cntxb[0].dataIndex;
+										var dcat = cntxb[0].dataset.tree[di].category;
+										// console.log('index = ', cntxb[0].dataIndex);
+										// console.log('cntx = ', cntxb[0].dataset.tree[0].category);
+										return dcat;
+									},
+								},
+								padding: 10,
+							}, // tooltip
+						}, // plugins
+
+					}, // options 
+				});
+
+				var thebarc = document.getElementById("ctmtxnmixgradientbar");
+				var thelegbar = getArrayofColors.length;
+				// console.log('thelegbar = ', thelegbar);
+				thebarc.style.background = "linear-gradient(90deg, "+ getArrayofColors[0] +", "+ getArrayofColors[thelegbar - 1] +")";
+			}
+			createChartATMMixTransactions();
+
+			function thousands_separators(num) {
+				var num_parts = num.toString().split(".");
+				num_parts[0] = num_parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+				return num_parts.join(".");
+			}
+			function adjustcolorme(color, amount) {
+				// console.log("color = ", color);
+				// console.log("amount = ", amount);
+				return '#' + color.replace(/^#/, '').replace(/../g, color => ('0'+Math.min(255, Math.max(0, parseInt(color, 16) + amount)).toString(16)).substr(-2));
+			}
+			function getthenewcolorarray() {
+				var newArrayGotIt = [];
+				for (var zi = 0; zi < 10; zi++) {
+					newArrayGotIt.push(adjustcolorme("#6CC4A1", -10 * zi));
+					// console.log("the new color is = ", newArrayGotIt[zi]);
+				}
+				// console.log("RR newArrayGotIt = ", newArrayGotIt);
+				return newArrayGotIt;
+			}
+		</script>
+	</body>
+</html>
