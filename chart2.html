@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<!-- <meta name="viewport" content="width=device-width, initial-scale=1"> -->
+		<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+		<title>Brain Bank - Digital Payments</title>
+		<style type="text/css">
+			* {
+				margin: 0;
+				padding: 0;
+				font-family: "Avenir", "Segoe UI", arial, sans-serif;
+			}
+			body {
+				/*padding: 20px;*/
+				background: #f1f5f9;
+			}
+			section {
+				height: calc(100vh - 80px); 
+				padding: 40px;
+				border-bottom: 1px solid #ddd;
+			}
+			h1 {
+				font-weight: normal;
+				padding: 0 0 15px;
+			}
+
+			/* chart CSS */
+			.chart-box {
+				background: white;
+				border-radius: 16px;
+				padding: 20px;
+				box-shadow: rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0.1) 0px 1px 3px 0px, rgba(0, 0, 0, 0.1) 0px 1px 2px -1px;
+			}
+			.chart-area {
+				background: #2a2a2a;
+				padding: 15px;
+			}
+			.chart-area2 {
+				background: rgb(32, 41, 57);
+				padding: 15px;
+			}
+		</style>
+	</head>
+	<body>
+		<section>
+			<h1>Chart 1 - Digital Payments | Transaction Overview</h1>
+			<div class="chart-box">
+				<div class="chart-area2">
+					<canvas id="dpTransOverview" width="600" height="500"></canvas>
+				</div>
+			</div>
+		</section>
+		<section>
+			<h1>Chart 2 - Digital Payments | Technical Decline</h1>
+			<div class="chart-box">
+				<div class="chart-area">
+					<canvas id="dpTechDecline" width="600" height="500"></canvas>
+				</div>
+			</div>
+		</section>
+		<section>
+			<h1>Chart 3 - Digital Payments | Business Decline</h1>
+			<div class="chart-box">
+				<div class="chart-area">
+					<canvas id="dpBusiDecline" width="600" height="500"></canvas>
+				</div>
+			</div>
+		</section>
+		<script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/chartjs-plugin-annotation/2.0.0/chartjs-plugin-annotation.min.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/chartjs-plugin-datalabels/2.1.0/chartjs-plugin-datalabels.min.js"></script>
+		<script type="text/javascript">
+			/* variables */
+			var vrchartfont = "Avenir, Segoe UI, arial, sans-serif";
+
+			var dlbls_barvalue = "#dddddd";
+			var title_charttitle = "white";
+			var title_ylabel = "white";
+			var title_xlabel = "white";
+
+			var legend_textcolor = "#dddddd";
+
+			var ygrid_bordercolor = "#444444",
+				  ygrid_color = "#444444",
+				  xgrid_bordercolor = "#444444",
+				  xgrid_color = "#444444";
+
+			var ytick_color = "#aaa",
+				  xtick_color = "#aaa";
+
+			/* //Chart 1 - Digital Payments | Transaction Overview */
+			function createChartdpTxnOverview() {
+				//console.log("Chart 1 - Transaction Overview");
+				var cdptxno = document.getElementById("dpTransOverview");
+				var ctxdptxno = cdptxno.getContext("2d");
+
+				var cdxLabeldptxno = [
+					"Jul 21", "Aug 21", "Sep 21", "Oct 21", "Nov 21", "Dec 21",
+					"Jan 22", "Feb 22", "Mar 22", "Apr 22", "May 22", "Jun 22",
+				];
+				var cdyDatadptxno = [
+					10, 20, 30, 20, 10, 20,
+					40, 80, 90, 20, 20, 30,
+				];
+
+				Chart.register(ChartDataLabels);
+
+				var dpTxnoChart = new Chart(ctxdptxno, {
+					type: "line",
+					data: {
+						labels: cdxLabeldptxno, 
+						datasets: [{
+							label: "New Chart",
+							data: cdyDatadptxno,
+							// backgroundColor: ["red"],
+							borderColor: "rgb(106, 114, 191)",
+							// pointBackgroundColor: "red",
+							// pointBackgroundColor: "transparent",
+							pointRadius: 0,
+							tension: 0.1,
+							fill: {
+								target: "origin",
+								above: "rgba(106, 114, 191, 0.2)",
+								// below: "red",
+							},
+						}],
+					},
+					options: {
+						responsive: true,
+						maintainAspectRatio: false,
+						plugins: {
+							legend: {
+								display: false,
+							},
+							title: {
+								display: true,
+								text: "Transaction Overview",
+								color: title_charttitle,
+								align: "start",
+								padding: {
+									bottom: 5,
+								},
+								font: {
+									family: vrchartfont,
+									size: 20,
+									weight: "500",
+								},
+							}, // title
+							subtitle: {
+								display: true,
+								text: "Number of Transactions",
+								color: title_charttitle,
+								align: "start",
+								padding: {
+									bottom: 15,
+								},
+								font: {
+									family: vrchartfont,
+									size: 14,
+									// weight: "500",
+								},
+							}, // subtitle
+
+							datalabels: {
+								display: false,
+							}, // datalabels 
+
+						}, // plugins
+
+						scales: {
+							y: {
+								// display: false,
+								beginAtZero: true,
+								ticks: {
+									color: "transparent",
+									// stepSize: 5000,
+									font: {
+										family: vrchartfont,
+									},
+								},
+								grid: {
+									borderColor: "transparent",
+									color: ygrid_bordercolor,
+								},
+							}, // y
+							x: {
+								ticks: {
+									color: xtick_color,
+									font: {
+										family: vrchartfont,
+									},
+								},
+								grid: {
+									borderColor: xgrid_bordercolor,
+									color: xgrid_bordercolor,
+								},
+							}, // x
+						}, // scales
+
+					}, // option 
+				});
+				//var catvh = new Chart(ctxctvh, {});
+			}
+			createChartdpTxnOverview();
+
+			/* //Chart 2 - Digital Payments | Technical Decline */
+			function createChartdpTechDecline() {
+				//console.log("Chart 2 - Technical Decline");
+
+				var cdptechd = document.getElementById('dpTechDecline');
+				var ctxcdptechd = cdptechd.getContext('2d');
+
+				var cdxLabeldptechd = [
+					"Invalid Transaction","Unable To Process Due To Remitter Side Issue","Response Code Error","Requath Time Out For Pay", "PSP Not Available"
+				];
+
+				var cdyDatadptechd = [
+					{
+						label: "For The Day Count",
+						backgroundColor: "#277BC0",
+						data: [ 30445, 26, 558, 129, 32 ],
+						maxBarThickness: 50,
+					},
+					{
+						label: "Month To Date Count",
+						backgroundColor: "#FFB200",
+						data: [ 532460, 53822, 6377, 2271, 173 ],
+						maxBarThickness: 50,
+					}
+				];
+
+				// Chart.register(ChartDataLabels);
+
+				var cadphd = new Chart(ctxcdptechd, {
+					type: 'bar',
+					data: {
+						labels: cdxLabeldptechd,
+						datasets: cdyDatadptechd,
+					},
+					options: {
+						// responsive: true,
+						// maintainAspectRatio: false,
+						plugins: {
+							legend: {
+								display: true,
+								position: "bottom",
+								labels: {
+									padding: 20,
+									color: legend_textcolor,
+									font: {
+										family: vrchartfont,
+									},
+								}, // labels 
+							},
+							title: {
+								display: true,
+								text: "Technical Decline",
+								color: title_charttitle,
+								padding: {
+									bottom: 15,
+								},
+								font: {
+									family: vrchartfont,
+									size: 20,
+									weight: "500",
+								},
+							}, // title
+
+							datalabels: {
+								color: dlbls_barvalue,
+								align: "top",
+								anchor: "end",
+								font: {
+									family: vrchartfont,
+								},
+								formatter: function (val, ctx) {
+								// 	return "$ " + thousands_separators(val);
+									return thousands_separators(val);
+								},
+							}, // datalabels 
+
+							tooltip: {
+								position: "nearest",
+								xAlign: "center",
+								yAlign: "bottom",
+								bodyFont: {
+									family: vrchartfont,
+								},
+								callbacks: {
+									label: function (cntx) {
+										//console.log(cntx);
+										return " " + thousands_separators(cntx.parsed.y);
+									},
+									title: function (cntx) {
+										// console.log('title ',cntx);
+										return "Channel - " + cntx[0].label;
+									},
+								},
+								padding: 10,
+							}, // tooltip
+
+						}, // plugins 
+
+						scales: {
+							y: {
+								beginAtZero: true,
+								title: {
+									text: "Count",
+									display: true,
+									color: title_ylabel,
+									font: {
+										size: 14,
+										// weight: "bold",
+										family: vrchartfont,
+										// family: "Segoe UI, arial, sans-serif",
+									},
+								}, // title 
+								ticks: {
+									color: ytick_color,
+									font: {
+										family: vrchartfont,
+									},
+								}, // ticks
+								grid: {
+									borderColor: ygrid_bordercolor,
+									color: ygrid_color,
+								}, // grid
+							}, // y
+							x: {
+								title: {
+									text: "CBS",
+									display: true,
+									color: title_xlabel,
+									font: {
+										size: 14, 
+										family: vrchartfont,
+									}, // title
+								},
+								ticks: {
+									color: xtick_color,
+									font: {
+										family: vrchartfont,
+									},
+								}, // ticks
+								grid: {
+									borderColor: "transparent",
+									color: "transparent",
+								}, // grid
+							}, // x
+						}, // scales 
+
+					}, // options 
+				});
+			}
+			createChartdpTechDecline();
+
+			/* //Chart 3 - Digital Payments | Business Decline */
+			function createChartdpBusiDecline() {
+				//console.log("Chart 4 - Business Decline");
+
+				var cdpbusid = document.getElementById('dpBusiDecline');
+				var ctxcdpbusid = cdpbusid.getContext('2d');
+
+				var cdxLabeldpbusid = [
+					"Account Does Not Exist (Remitter)", "Number Or Pin Tries Exceeded", "Invalid UPI Pin", "Invalid ATM Pin", "Invalid/Incorrect OTP", "UPI Pin Not Set BY Customer"
+				];
+
+				var cdyDatadpbusid = [
+					{
+						label: "For The Day Count",
+						backgroundColor: "#DF7861",
+						data: [ 534253, 269717, 249946, 20248, 19547, 14475 ],
+						maxBarThickness: 50,
+					},
+					{
+						label: "Month To Date Count",
+						backgroundColor: "#6CC4A1",
+						data: [ 7454062, 3968664, 3867326, 287699, 271045, 213153 ],
+						maxBarThickness: 50,
+					}
+				];
+
+				// Chart.register(ChartDataLabels);
+
+				var cadphd = new Chart(ctxcdpbusid, {
+					type: 'bar',
+					data: {
+						labels: cdxLabeldpbusid,
+						datasets: cdyDatadpbusid,
+					},
+					options: {
+						// responsive: true,
+						// maintainAspectRatio: false,
+						plugins: {
+							legend: {
+								display: true,
+								position: "bottom",
+								labels: {
+									padding: 20,
+									color: legend_textcolor,
+									font: {
+										family: vrchartfont,
+									},
+								}, // labels 
+							},
+							title: {
+								display: true,
+								text: "Technical Decline",
+								color: title_charttitle,
+								padding: {
+									bottom: 15,
+								},
+								font: {
+									family: vrchartfont,
+									size: 20,
+									weight: "500",
+								},
+							}, // title
+
+							datalabels: {
+								color: dlbls_barvalue,
+								align: "top",
+								anchor: "end",
+								font: {
+									family: vrchartfont,
+								},
+								formatter: function (val, ctx) {
+								// 	return "$ " + thousands_separators(val);
+									return thousands_separators(val);
+								},
+							}, // datalabels 
+
+							tooltip: {
+								position: "nearest",
+								xAlign: "center",
+								yAlign: "bottom",
+								bodyFont: {
+									family: vrchartfont,
+								},
+								callbacks: {
+									label: function (cntx) {
+										//console.log(cntx);
+										return " " + thousands_separators(cntx.parsed.y);
+									},
+									title: function (cntx) {
+										// console.log('title ',cntx);
+										return "Channel - " + cntx[0].label;
+									},
+								},
+								padding: 10,
+							}, // tooltip
+
+						}, // plugins 
+
+						scales: {
+							y: {
+								beginAtZero: true,
+								title: {
+									text: "Count",
+									display: true,
+									color: title_ylabel,
+									font: {
+										size: 14,
+										// weight: "bold",
+										family: vrchartfont,
+										// family: "Segoe UI, arial, sans-serif",
+									},
+								}, // title 
+								ticks: {
+									color: ytick_color,
+									font: {
+										family: vrchartfont,
+									},
+								}, // ticks
+								grid: {
+									borderColor: ygrid_bordercolor,
+									color: ygrid_color,
+								}, // grid
+							}, // y
+							x: {
+								title: {
+									text: "Error Type",
+									display: true,
+									color: title_xlabel,
+									font: {
+										size: 14, 
+										family: vrchartfont,
+									}, // title
+								},
+								ticks: {
+									color: xtick_color,
+									font: {
+										family: vrchartfont,
+									},
+								}, // ticks
+								grid: {
+									borderColor: "transparent",
+									color: "transparent",
+								}, // grid
+							}, // x
+						}, // scales 
+
+					}, // options 
+				});
+			}
+			createChartdpBusiDecline();
+
+			function thousands_separators(num) {
+				var num_parts = num.toString().split(".");
+				num_parts[0] = num_parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+				return num_parts.join(".");
+			}
+		</script>
+	</body>
+</html>

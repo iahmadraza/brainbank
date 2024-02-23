@@ -1,0 +1,629 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<!-- <meta name="viewport" content="width=device-width, initial-scale=1"> -->
+		<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+		<title>Brain Bank - ATM</title>
+		<style type="text/css">
+			* {
+				margin: 0;
+				padding: 0;
+				font-family: "Avenir", "Segoe UI", arial, sans-serif;
+			}
+			body {
+				/*padding: 20px;*/
+				background: #f1f5f9;
+			}
+			section {
+				height: calc(100vh - 80px); 
+				padding: 40px;
+				border-bottom: 1px solid #ddd;
+			}
+			h1 {
+				font-weight: normal;
+				padding: 0 0 15px;
+			}
+
+						/* chart CSS */
+			.chart-box {
+				background: white;
+				border-radius: 16px;
+				padding: 20px;
+				box-shadow: rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0.1) 0px 1px 3px 0px, rgba(0, 0, 0, 0.1) 0px 1px 2px -1px;
+			}
+			.chart-area {
+				background: #2a2a2a;
+				padding: 15px;
+			}
+			.chart-area2 {
+				background: rgb(32, 41, 57);
+				padding: 15px;
+			}
+		</style>
+	</head>
+	<body>
+		<section>
+			<h1>Chart 1 - ATM | Weekly Transaction Volume Performance</h1>
+			<div class="chart-box">
+				<div class="chart-area">
+					<canvas id="catmWeeklyTxnPer" width="600" height="500"></canvas>
+				</div>
+			</div>
+		</section>
+		<section>
+			<h1>Chart 2 - ATM | Fleet Interaction Success Rate</h1>
+			<div class="chart-box">
+				<div class="chart-area">
+					<canvas id="catmFleetInsSuRate" width="600" height="500"></canvas>
+				</div>
+			</div>
+		</section>
+		<section>
+			<h1>Chart 3 - ATM | ATM Failure (Previous Day)</h1>
+			<div class="chart-box">
+				<div class="chart-area">
+					<canvas id="catmFailurePrevDay" width="600" height="500"></canvas>
+				</div>
+			</div>
+		</section>
+		<section>
+			<h1>Chart 4 - ATM | Top/Bottom 5 Performers by Volume (Last 7 Days)</h1>
+			<div class="chart-box">
+				<div class="chart-area">
+					<canvas id="catmTopBotPerformersVol" width="600" height="500"></canvas>
+				</div>
+			</div>
+		</section>
+		<script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/chartjs-plugin-annotation/2.0.0/chartjs-plugin-annotation.min.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/chartjs-plugin-datalabels/2.1.0/chartjs-plugin-datalabels.min.js"></script>
+		<script src="https://cdn.jsdelivr.net/npm/chartjs-chart-treemap@2.0.2/dist/chartjs-chart-treemap.min.js"></script>
+		<script type="text/javascript">
+			/* variables */
+			var vrchartfont = "Avenir, Segoe UI, arial, sans-serif";
+
+			var dlbls_barvalue = "#dddddd";
+			var title_charttitle = "white";
+			var title_ylabel = "white";
+			var title_xlabel = "white";
+
+			var legend_textcolor = "#dddddd";
+
+			var ygrid_bordercolor = "#444444",
+				  ygrid_color = "#444444",
+				  xgrid_bordercolor = "#444444",
+				  xgrid_color = "#444444";
+
+			var ytick_color = "#aaa",
+				  xtick_color = "#aaa";
+
+			/* //Chart 1 - ATM | Weekly Transaction Volume Performance */
+			function createChartATMWeeklyTxnVolPer() {
+				//console.log("Chart 1 - Weekly Transaction Volume Performance");
+				var eatmwtxnp = document.getElementById("catmWeeklyTxnPer");
+				var ctxatmwtxnp = eatmwtxnp.getContext("2d");
+
+				var cdxLabelatmwtxnvp = [
+					"Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"
+				];
+				var cdyDataatmwtxnvp = [
+					{
+						label: "Current Week",
+						data: [ 64945, 96844, 84316, 92964, 46234, 98947, 36035 ],
+						backgroundColor: "#FFA500",
+						borderColor: "#FFA500",
+						pointRadius: 0,
+					},
+					{
+						label: "Last Week",
+						data: [ 45825, 75729, 66231, 31368, 66741, 75215, 34201 ],
+						backgroundColor: "#B270A2",
+						borderColor: "#B270A2",
+						pointRadius: 0,
+					},
+					{
+						label: "Last Year",
+						data: [ 63481, 25489, 45686, 35209, 30686, 34010, 30569 ],
+						backgroundColor: "#6CC4A1",
+						borderColor: "#6CC4A1",
+						pointRadius: 0,
+					},
+				];
+
+				Chart.register(ChartDataLabels);
+
+				var chartatmwtxnp = new Chart(ctxatmwtxnp, {
+					type: "line",
+					data: {
+						labels: cdxLabelatmwtxnvp,
+						datasets: cdyDataatmwtxnvp,
+						tension: 0.1,
+					},
+					options: {
+						// responsive: true,
+						// maintainAspectRatio: false,
+						plugins: {
+							legend: {
+								display: true,
+								position: "bottom",
+								labels: {
+									padding: 20,
+									color: legend_textcolor,
+									font: {
+										family: vrchartfont,
+									},
+								}, // labels 
+							},
+							title: {
+								display: true,
+								text: "Weekly Transaction Volume Performance",
+								color: title_charttitle,
+								padding: {
+									bottom: 15,
+								},
+								font: {
+									family: vrchartfont,
+									size: 20,
+									weight: "500",
+								},
+							}, // title
+
+							datalabels: {
+								display: false,
+							}, // datalabels 
+
+							tooltip: {
+								position: "nearest",
+								xAlign: "center",
+								yAlign: "bottom",
+								bodyFont: {
+									family: vrchartfont,
+								},
+								callbacks: {
+									label: function (cntx) {
+										//console.log(cntx);
+										return " " + thousands_separators(cntx.parsed.y);
+									},
+									title: function (cntx) {
+										// console.log('title ',cntx);
+										return "Channel - " + cntx[0].label;
+									},
+								},
+								padding: 10,
+							}, // tooltip
+
+						}, // plugins 
+
+						scales: {
+							y: {
+								beginAtZero: true,
+								title: {
+									text: "Transaction Volume",
+									display: true,
+									color: title_ylabel,
+									font: {
+										size: 14,
+										// weight: "bold",
+										family: vrchartfont,
+										// family: "Segoe UI, arial, sans-serif",
+									},
+								}, // title 
+								ticks: {
+									color: ytick_color,
+									font: {
+										family: vrchartfont,
+									},
+								}, // ticks
+								grid: {
+									borderColor: ygrid_bordercolor,
+									color: ygrid_color,
+								}, // grid
+							}, // y
+							x: {
+								ticks: {
+									color: xtick_color,
+									font: {
+										family: vrchartfont,
+									},
+								}, // ticks
+								grid: {
+									borderColor: "transparent",
+									color: "transparent",
+								}, // grid
+							}, // x
+						}, // scales 
+
+					}, // options 
+				});
+			}
+			createChartATMWeeklyTxnVolPer();
+
+			/* //Chart 2 - ATM | Fleet Interaction Success Rate */
+			function createChartATMFleetIntSucRate() {
+				//console.log("Chart 2 - Fleet Interaction Success Rate");
+				var eatmfleetintsurate = document.getElementById("catmFleetInsSuRate");
+				var ctxatmfleetintsurate = eatmfleetintsurate.getContext("2d");
+
+				var cdxLabelatmfleetinsurate = [
+					"Previous Day", "Last 7 Days", "Last 30 days"
+				];
+				var cdyDataatmfleetinsurate = [
+					"97.79", "94.40", "94.36"
+				];
+
+				var chartatmfisr = new Chart(ctxatmfleetintsurate, {
+					type: "bar",
+					data: {
+						labels: cdxLabelatmfleetinsurate,
+						datasets: [{
+							label: "Label",
+							data: cdyDataatmfleetinsurate,
+							backgroundColor: "#6CC4A1",
+							maxBarThickness: 50,
+						}],
+					},
+					
+					options: {
+						// responsive: true,
+						// maintainAspectRatio: false,
+						
+						plugins: {
+							
+							legend: {
+								display: false,
+							}, // legend
+
+							title: {
+								display: true,
+								text: "Fleet Interaction Success Rate",
+								color: title_charttitle,
+								padding: {
+									bottom: 15,
+								},
+								font: {
+									family: vrchartfont,
+									size: 20,
+									weight: "500",
+								},
+							}, // title
+
+							datalabels: {
+								color: dlbls_barvalue,
+								align: "top",
+								anchor: "end",
+								font: {
+									family: vrchartfont,
+								},
+								formatter: function (val, ctx) {
+									return val + " %";
+								},
+							}, // datalabels 
+
+							tooltip: {
+								position: "nearest",
+								xAlign: "center",
+								yAlign: "bottom",
+								bodyFont: {
+									family: vrchartfont,
+								},
+								callbacks: {
+									label: function (cntx) {
+										return cntx.parsed.y + "%";
+									},
+									title: function (cntx) {
+										return cntx[0].label;
+									},
+								},
+								padding: 10,
+							}, // tooltip
+
+						}, // plugins
+
+						scales: {
+							y: {
+								beginAtZero: false,
+								title: {
+									text: "Percentage",
+									display: true,
+									color: title_ylabel,
+									font: {
+										size: 14,
+										family: vrchartfont,
+									},
+								}, // title 
+								ticks: {
+									color: ytick_color,
+									font: {
+										family: vrchartfont,
+									},
+								}, // ticks
+								grid: {
+									borderColor: ygrid_bordercolor,
+									color: ygrid_color,
+								}, // grid
+							}, // y
+							x: {
+								title: {
+									text: "Time Period",
+									display: true,
+									color: title_xlabel,
+									font: {
+										size: 14,
+										family: vrchartfont,
+									},
+								}, // title 
+								ticks: {
+									color: xtick_color,
+									font: {
+										family: vrchartfont,
+									},
+								}, // ticks
+								grid: {
+									borderColor: "transparent",
+									color: "transparent",
+								}, // grid
+							}, // x
+						}, // scales 
+
+					}, // options
+
+				}); // Chart
+			}
+			createChartATMFleetIntSucRate();
+
+			/* //Chart 2 - ATM | ATM Failure (Previous Day) */
+			function createChartATMFailurePrevDay() {
+				//console.log("Chart 3 - ATM Failure (Previous Day)");
+
+				var eatmfailureprevday = document.getElementById("catmFailurePrevDay");
+				var ctxatmfailureprevday = eatmfailureprevday.getContext("2d");
+
+				var cdxLabelatmfailureprevday = [
+					"User Error", "Unsupported Service", "Unavailable Service", "Deposit Dispense Error"
+				];
+				var cdyDataatmfailureprevday = [
+					0.28, 17.02, 1.05, 70.53
+				];
+
+				var chartatmfailpd = new Chart(ctxatmfailureprevday, {
+					type: "pie",
+					data: {
+						labels: cdxLabelatmfailureprevday,
+						datasets: [{
+							data: cdyDataatmfailureprevday,
+							backgroundColor: ["#FFA500", "#6CC4A1", "#B270A2", "#495C83" ],
+							borderColor: "transparent",
+						}],
+					}, // data 
+
+					options: {
+						plugins: {
+
+							legend: {
+								display: true,
+								position: "bottom",
+								labels: {
+									padding: 20,
+									color: legend_textcolor,
+									font: {
+										family: vrchartfont,
+									},
+								}, // labels 
+							}, // lengend 
+
+							title: {
+								display: true,
+								text: "ATM Failure",
+								color: title_charttitle,
+								padding: {
+									bottom: 5,
+								},
+								font: {
+									family: vrchartfont,
+									size: 20,
+									weight: "500",
+								},
+							}, // title
+							subtitle: {
+								display: true,
+								text: "(Previous Day)",
+								color: title_charttitle,
+								// align: "start",
+								padding: {
+									bottom: 40,
+								},
+								font: {
+									family: vrchartfont,
+									size: 14,
+									// weight: "500",
+								},
+							}, // subtitle
+
+							datalabels: {
+								color: dlbls_barvalue,
+								// align: "top",
+								// anchor: "end",
+								font: {
+									family: vrchartfont,
+								},
+								formatter: function (val, ctx) {
+									return val + " %";
+								},
+								labels: {
+									index: {
+										align: "end",
+										anchor: "end",
+										font: {size: 15},
+									}, // index
+								}, // labels
+							}, // datalabels 
+
+							tooltip: {
+								position: "nearest",
+								xAlign: "center",
+								yAlign: "bottom",
+								bodyFont: {
+									family: vrchartfont,
+								},
+								callbacks: {
+									label: function (c) {
+										return c.parsed + "%";
+									},
+									title: function (cntx) {
+										return cntx[0].label;
+									},
+								},
+								padding: 10,
+							}, // tooltip
+
+						}, // plugins 
+					}, // options
+
+				}); // Chart
+			}
+			createChartATMFailurePrevDay();
+
+			/* //Chart 4 - ATM | Top / Bottom 5 Performers by Volume (Last 7 Days) */
+			function createChartATMTopBotWPerVol() {
+				//console.log("Chart 4 - Top / Bottom 5 Performers by Volume (Last 7 Days)");
+
+				var eatmtopbotpervol = document.getElementById("catmTopBotPerformersVol");
+				var ctxatmtopbotpervol = eatmtopbotpervol.getContext("2d");
+
+				var cdxLabelatmtopbotpervol = [
+					"User Error", "Unsupported Service", "Unavailable Service", "Deposit Dispense Error"
+				];
+				var cdyDataatmtopbotpervol = [
+					0.28, 17.02, 1.05, 70.53
+				];
+				var thenewdata = [
+  {category: 'A', subcategory: 'one', value: 20},
+  {category: 'B', subcategory: 'two', value: 18},
+  {category: 'C', subcategory: 'three', value: 10},
+  {category: 'D', subcategory: 'four', value: 10},
+  {category: 'E', subcategory: 'five', value: 10},
+  {category: 'F', subcategory: 'six', value: 5},
+  {category: 'G', subcategory: 'seven', value: 5},
+  {category: 'H', subcategory: 'eight', value: 5},
+  {category: 'I', subcategory: 'nine', value: 4},
+  {category: 'J', subcategory: 'ten', value: 3},
+];
+
+var thenewdata2 = [{category: 'main', value: 1},
+  {category: 'main', value: 20},
+  {category: 'main2', value: 10},
+  {category: 'other', value: 5},
+  {category: 'other2', value: 3},
+  ];
+
+  var thenewdata3 = [
+  {category: 'A', value: 20},
+  {category: 'B', value: 18},
+  {category: 'C', value: 10},
+  {category: 'D', value: 10},
+  {category: 'E', value: 10},
+  {category: 'F', value: 5},
+  {category: 'G', value: 5},
+  {category: 'H', value: 5},
+  {category: 'I', value: 4},
+  {category: 'J', value: 3},
+];
+
+				var chartatmtopbotpervol = new Chart(ctxatmtopbotpervol, {
+					type: "treemap",
+					data: {
+						/*labels: ["ta15", "ta6", "ta6", "ta5", "ta4", "ta3", "ta2", "ta2"],
+						datasets: [
+							{
+								// labels: ["ta15", "ta6", "ta6", "ta5", "ta4", "ta3", "ta2", "ta2"],
+								tree: [15, 6, 6, 5, 4, 3, 2, 2],
+								borderColor: 'green',
+        borderWidth: 1,
+        spacing: 0,
+        backgroundColor: ["purple"],
+        labels: {
+        display: true,
+        formatter: function(ctx) {
+        	console.log('helo = ', ctx.raw);
+        	return 'Kmq ' + ctx.raw.v
+        }
+      },
+							}
+						],*/
+						/*datasets: [{
+      tree: thenewdata,
+      backgroundColor: ["red"],
+      key: 'value',
+      groups: ['category', 'value'],
+      captions: {
+        display: true,
+        formatter(ctx) {
+          return ctx.raw.g + " = " + ctx.raw.v;
+        }
+      },
+    }]*/
+
+    /*datasets: [{
+      tree: [100, 50, 30, 20, 10],
+      treemap: {
+      	labels:
+      		["label 1", "lbl2", "lbl3", "lbl4", "lbl5"],
+      },
+      // key: 'value',
+      // groups: ['category'],
+      backgroundColor: ["green"],
+    }]*/
+
+    datasets: [{
+      tree: thenewdata3,
+      key: 'value',
+      // groups: ['category', 'value'],
+      backgroundColor: "#6CC4A1",
+      // font: {
+      // 	family: "Times New Roman",
+      // },
+      labels: {
+        display: true,
+        // color: "red",
+        font: {
+        	size: 16,
+	      	family: vrchartfont,
+        },
+        formatter: function(ctx){
+        	// console.log("ctx = ", ctx.raw._data.category);
+        	var tlb = ctx.raw._data.category;
+        	var tvl = ctx.raw.v;
+        	// return 'The Label is = ' + tlb + ' ||| And the Value is = ' + tvl;
+        	return tlb;
+        },
+      }
+      // captions: {
+      //   display: true,
+      //   formatter(ctx) {
+      //   	console.log('ctx = ', ctx.raw);
+      //     return ctx.raw;
+      //   }
+      // },
+    }]
+
+
+					},
+					options: {
+    plugins: {
+      datalabels: false,
+      legend: false,
+    }
+  }
+				});
+			}
+			createChartATMTopBotWPerVol();
+
+			function thousands_separators(num) {
+				var num_parts = num.toString().split(".");
+				num_parts[0] = num_parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+				return num_parts.join(".");
+			}
+		</script>
+	</body>
+</html>
